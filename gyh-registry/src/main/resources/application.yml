@@ -1,0 +1,11 @@
+server:
+  port: 10086
+spring:
+  application:
+    name: gyh-registry
+eureka:
+  client:         #目前没做多个server集群,故配置不注册自己,不拉取自己
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka

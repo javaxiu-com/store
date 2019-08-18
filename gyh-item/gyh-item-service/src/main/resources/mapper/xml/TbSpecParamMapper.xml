@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyhqq.item.mapper.TbSpecParamMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gyhqq.item.entity.TbSpecParam">
+        <id column="id" property="id" />
+        <result column="cid" property="cid" />
+        <result column="group_id" property="groupId" />
+        <result column="name" property="name" />
+        <result column="is_numeric" property="isNumeric" />
+        <result column="unit" property="unit" />
+        <result column="generic" property="generic" />
+        <result column="searching" property="searching" />
+        <result column="segments" property="segments" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+</mapper>

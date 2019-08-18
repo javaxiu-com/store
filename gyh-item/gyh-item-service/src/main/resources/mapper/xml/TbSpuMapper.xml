@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyhqq.item.mapper.TbSpuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gyhqq.item.entity.TbSpu">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="sub_title" property="subTitle" />
+        <result column="cid1" property="cid1" />
+        <result column="cid2" property="cid2" />
+        <result column="cid3" property="cid3" />
+        <result column="brand_id" property="brandId" />
+        <result column="saleable" property="saleable" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+</mapper>

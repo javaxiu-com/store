@@ -1,0 +1,44 @@
+server:
+  port: 10010
+spring:
+  application:
+    name: gyh-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    registry-fetch-interval-seconds: 5    #每隔5秒拉取一次数据
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 6000   #熔断超时时长：6000ms
+ribbon:
+  ConnectTimeout: 500             #ribbon链接超时时长
+  ReadTimeout: 2000               #ribbon读取超时时长
+  MaxAutoRetries: 0               #当前服务重试次数
+  MaxAutoRetriesNextServer: 1     #切换服务重试次数
+  OkToRetryOnAllOperations: false #是否对所有的请求方式都重试，只对get请求重试
+zuul:
+  prefix: /api
+  routes:
+    item-service: /item/**        #将商品微服务映射到/item/**
+    upload-service: /upload/**    #将上传微服务映射到/upload/**
+gyh:                              #CORS的跨域方案优化配置
+  cors:
+    allowedOrigins:
+      - http://manage.store.com
+    allowedCredentials: true
+    allowedHeaders:
+      - "*"
+    allowedMethods:
+      - GET
+      - POST
+      - DELETE
+      - PUT
+      - OPTIONS
+      - HEAD
+    maxAge: 360000
+    filterPath: "/**"

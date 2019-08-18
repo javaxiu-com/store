@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0af4a5"],{"0e60":function(n,e,t){"use strict";t.r(e);var c=function(){var n=this,e=n.$createElement,t=n._self._c||e;return t("div",[n._v("\n  促销管理\n")])},a=[],o={name:"promotion"},r=o,u=t("2877"),i=Object(u["a"])(r,c,a,!1,null,"cf526ec6",null);e["default"]=i.exports}}]);
+//# sourceMappingURL=chunk-2d0af4a5.f4f56867.js.map

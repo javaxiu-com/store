@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gyhqq.item.mapper.TbSpuDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gyhqq.item.entity.TbSpuDetail">
+        <id column="spu_id" property="spuId" />
+        <result column="description" property="description" />
+        <result column="generic_spec" property="genericSpec" />
+        <result column="special_spec" property="specialSpec" />
+        <result column="packing_list" property="packingList" />
+        <result column="after_service" property="afterService" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,25 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: upload-service
+  servlet:
+    multipart:
+      max-file-size: 5MB
+# Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+gyh:
+  oss:
+    accessKeyId: LTAIpAglU0oE3mde                        #LTAIUVK6tAM6xxYm
+    accessKeySecret: d1v6G73cEXKnlGctNcbRutvsCJRU6P      #L5Y0Lg6r2cAHgm6uVAdkLe5RdzWpRn
+    host: http://image.store.com  #store-shunyi.oss-cn-beijing.aliyuncs.com # 访问oss的域名，很重要bucket + endpoint! 这里隐藏阿里云域名了,用nginx代反向代理.
+    endpoint: oss-cn-beijing.aliyuncs.com # 你的服务的端点，不一定跟我一样
+    dir: "store/" # 保存到bucket的某个子目录
+    expireTime: 30 # 过期时间，单位是S      # 重要: 这个时间是签名的过期时间,调整大些(300),有的机器时钟比正常时钟慢一点!!!
+    maxFileSize: 5242880 #文件大小限制，这里是5M
