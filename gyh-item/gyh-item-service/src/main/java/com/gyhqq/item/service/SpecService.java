@@ -70,10 +70,24 @@ public class SpecService {
 
     }
 
-    public void saveParams(TbSpecParam tbSpecParam) {
+    public void saveParam(TbSpecParam tbSpecParam) {
         boolean save = tbSpecParamService.save(tbSpecParam);
         if (!save) {
             throw new GyhException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+    }
+
+    public void updateParam(TbSpecParam tbSpecParam) {
+        boolean update = tbSpecParamService.updateById(tbSpecParam);
+        if (!update) {
+            throw new GyhException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+    }
+
+    public void deleteParam(Long id) {
+        boolean removeById = tbSpecParamService.removeById(id);
+        if (!removeById) {
+            throw new GyhException(ExceptionEnum.DELETE_OPERATION_FAIL);
         }
     }
 }

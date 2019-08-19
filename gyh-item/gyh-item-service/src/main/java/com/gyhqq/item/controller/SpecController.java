@@ -81,15 +81,39 @@ public class SpecController {
     }
 
     /**
-     * 新增规个参数信息 @RequestBody-->json格式需要
+     * 新增规格参数信息 @RequestBody-->json格式需要
      *
      * @param tbSpecParam
      * @return
      */
     @PostMapping("/param")
     public ResponseEntity<Void> saveParam(@RequestBody TbSpecParam tbSpecParam) {
-        specService.saveParams(tbSpecParam);
+        specService.saveParam(tbSpecParam);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 更新规格参数信息 @RequestBody-->json格式需要
+     *
+     * @param tbSpecParam
+     * @return
+     */
+    @PutMapping("/param")
+    public ResponseEntity<Void> updateParam(@RequestBody TbSpecParam tbSpecParam) {
+        specService.updateParam(tbSpecParam);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 删除规格参数信息
+     * restful风格中/{id}与@PathVariable结合使用!
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/param/{id}")
+    public ResponseEntity<Void> deleteParam(@PathVariable Long id) {
+        specService.deleteParam(id);
+        return ResponseEntity.ok().build();
     }
 
 }

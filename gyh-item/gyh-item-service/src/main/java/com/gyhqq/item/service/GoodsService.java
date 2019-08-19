@@ -1,15 +1,14 @@
 package com.gyhqq.item.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gyhqq.common.Exception.GyhException;
 import com.gyhqq.common.enums.ExceptionEnum;
 import com.gyhqq.common.utils.BeanHelper;
 import com.gyhqq.common.vo.PageResult;
-import com.gyhqq.item.entity.TbSku;
-import com.gyhqq.item.entity.TbSpu;
-import com.gyhqq.item.entity.TbSpuDetail;
+import com.gyhqq.item.entity.*;
 import com.gyhqq.item.pojo.SkuDTO;
 import com.gyhqq.item.pojo.SpuDTO;
 import com.gyhqq.item.pojo.SpuDetailDTO;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +42,30 @@ public class GoodsService {
         }
         //构造返回值
         List<SpuDTO> spuDTOList = BeanHelper.copyWithCollection(spuIPage.getRecords(), SpuDTO.class);
+        handlerCategoryAndBrandName(spuDTOList);
         return new PageResult<>(spuIPage.getTotal(), spuIPage.getPages(), spuDTOList);
+    }
+
+    /**
+     * 商品列表分类和品牌不显示,
+     * 把取得的id转换为name名称
+     */
+    @Autowired
+    private TbCategoryService CategoryService;
+
+    @Autowired
+    private TbBrandService brandService;
+
+    private void handlerCategoryAndBrandName(List<SpuDTO> spuDTOList) {
+        for (SpuDTO spuDTO : spuDTOList) {
+            List<Long> categoryIds = spuDTO.getCategoryIds();
+            Collection<TbCategory> tbCategories = CategoryService.listByIds(categoryIds);
+            String categoryName = tbCategories.stream().map(TbCategory::getName).collect(Collectors.joining("/"));
+            spuDTO.setCategoryName(categoryName);
+            //处理品牌名称
+            TbBrand tbBrand = brandService.getById(spuDTO.getBrandId());
+            spuDTO.setBrandName(tbBrand.getName());
+        }
     }
 
     /**
@@ -101,4 +124,86 @@ public class GoodsService {
         }
     }
 
+    /**
+     * 更新上下架,需要事务
+     *
+     * @param spuId
+     * @param saleable
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateSaleable(Long spuId, Boolean saleable) {
+        //更新spu
+        TbSpu tbSpu = new TbSpu().setId(spuId).setSaleable(saleable);
+        boolean bSpu = spuService.updateById(tbSpu);
+        if (!bSpu) {
+            throw new GyhException(ExceptionEnum.UPDATE_OPERATION_FAIL);
+        }
+        //更新sku
+        UpdateWrapper<TbSku> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.lambda().eq(TbSku::getSpuId, spuId);
+        updateWrapper.lambda().set(TbSku::getEnable, saleable);
+        boolean update = skuService.update(updateWrapper);
+        if (!update) {
+            throw new GyhException(ExceptionEnum.UPDATE_OPERATION_FAIL);
+        }
+    }
+
+    public SpuDetailDTO findSpuDetail(Long spuId) {
+        TbSpuDetail tbSpuDetail = spuDetailService.getById(spuId);
+        if (tbSpuDetail == null) {
+            throw new GyhException(ExceptionEnum.GOODS_NOT_FOUND);
+        }
+        return BeanHelper.copyProperties(tbSpuDetail, SpuDetailDTO.class);
+    }
+
+    public List<SkuDTO> findSkuBySpuId(Long spuId) {
+        QueryWrapper<TbSku> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(TbSku::getSpuId, spuId);
+        List<TbSku> skuList = skuService.list(queryWrapper);
+        if (CollectionUtils.isEmpty(skuList)) {
+            throw new GyhException(ExceptionEnum.GOODS_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(skuList, SkuDTO.class);
+    }
+
+    /**
+     * 修改商品:(需要事务)
+     * 修改商品上下架，更新spu信息，同时需要更新sku
+     * @param spuDTO
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateGoods(SpuDTO spuDTO) {
+        //修改spu表
+        TbSpu tbSpu = BeanHelper.copyProperties(spuDTO, TbSpu.class);
+        boolean b = spuService.updateById(tbSpu);
+        if (!b) {
+            throw new GyhException(ExceptionEnum.UPDATE_OPERATION_FAIL);
+        }
+        //修改spuDetail表
+        SpuDetailDTO spuDetail = spuDTO.getSpuDetail();
+        TbSpuDetail tbSpuDetail = BeanHelper.copyProperties(spuDetail, TbSpuDetail.class);
+        boolean b1 = spuDetailService.updateById(tbSpuDetail);
+        if (!b1) {
+            throw new GyhException(ExceptionEnum.UPDATE_OPERATION_FAIL);
+        }
+        //删除sku表
+        Long spuId = spuDTO.getId();
+        QueryWrapper<TbSku> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(TbSku::getSpuId,spuId);
+        boolean remove = skuService.remove(queryWrapper);
+        //int delete = skuService.getBaseMapper().delete(queryWrapper); //用该方法删除能知道删除了多少条!
+        if (!remove) {
+            throw new GyhException(ExceptionEnum.DELETE_OPERATION_FAIL);
+        }
+        //新增sku表
+        List<SkuDTO> skus = spuDTO.getSkus();
+        List<TbSku> tbSkuList = skus.stream().map(skuDTO -> {
+            skuDTO.setSpuId(spuId);
+            return BeanHelper.copyProperties(skuDTO, TbSku.class);
+        }).collect(Collectors.toList());
+        boolean b2 = skuService.saveBatch(tbSkuList);
+        if (!b2) {
+            throw new GyhException(ExceptionEnum.INSERT_OPERATION_FAIL);
+        }
+    }
 }

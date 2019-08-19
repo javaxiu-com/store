@@ -1,9 +1,11 @@
 package com.gyhqq.item.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,4 +69,18 @@ public class SpuDTO {
     private List<SkuDTO> skus;
 
     private SpuDetailDTO spuDetail;
+
+    /**
+     * 商品列表分类和品牌不显示,
+     * 把取得的id转换为name名称
+     */
+    private String categoryName; // 商品分类名称拼接
+
+    private String brandName;// 品牌名称
+
+    @JsonIgnore
+    public List<Long> getCategoryIds() {
+        List<Long> cids = Arrays.asList(cid1, cid2, cid3);
+        return cids;
+    }
 }
