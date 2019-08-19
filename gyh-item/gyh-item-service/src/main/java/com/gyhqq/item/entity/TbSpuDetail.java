@@ -1,5 +1,7 @@
 package com.gyhqq.item.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +24,11 @@ import java.util.Date;
 public class TbSpuDetail extends Model<TbSpuDetail> {
 
 private static final long serialVersionUID=1L;
-
+    /**
+     * 这儿需要加上@TableId(value = "spu_id", type = IdType.INPUT)注解,
+     * 因为数据库中该字段没有设置自动增长,用MybatisPlus就会有坑!!!
+     */
+    @TableId(value = "spu_id", type = IdType.INPUT)
     private Long spuId;
 
     /**

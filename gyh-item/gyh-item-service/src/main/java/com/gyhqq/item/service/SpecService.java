@@ -40,9 +40,14 @@ public class SpecService {
         }
     }
 
-    public List<SpecParamDTO> findParamList(Long gid) {
+    public List<SpecParamDTO> findParamList(Long gid, Long cid) {
         QueryWrapper<TbSpecParam> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(TbSpecParam::getGroupId, gid);
+        if (gid != null && gid != 0) {
+            queryWrapper.lambda().eq(TbSpecParam::getGroupId, gid);
+        }
+        if (cid != null && cid != 0) {
+            queryWrapper.lambda().eq(TbSpecParam::getCid, cid);
+        }
         List<TbSpecParam> specParamList = tbSpecParamService.list(queryWrapper);
         if (CollectionUtils.isEmpty(specParamList)) {
             throw new GyhException(ExceptionEnum.SPEC_NOT_FOUND);

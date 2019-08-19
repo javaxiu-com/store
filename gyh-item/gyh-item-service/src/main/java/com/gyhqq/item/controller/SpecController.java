@@ -57,7 +57,7 @@ public class SpecController {
 
     /**
      * 删除规格组信息
-     *  restful风格中/{id}与@PathVariable结合使用!
+     * restful风格中/{id}与@PathVariable结合使用!
      *
      * @param id
      * @return
@@ -69,18 +69,20 @@ public class SpecController {
     }
 
     /**
-     * 查询规格参数信息
-     *
+     * 查询规格参数信息 和 新增商品中的规格参数回显
      * @param gid
+     * @param cid
      * @return
      */
     @GetMapping("/params")
-    public ResponseEntity<List<SpecParamDTO>> findParamList(@RequestParam(name = "gid") Long gid) {
-        return ResponseEntity.ok(specService.findParamList(gid));
+    public ResponseEntity<List<SpecParamDTO>> findParamList(@RequestParam(name = "gid", required = false) Long gid,
+                                                            @RequestParam(name = "cid", required = false) Long cid) {
+        return ResponseEntity.ok(specService.findParamList(gid, cid));
     }
 
     /**
      * 新增规个参数信息 @RequestBody-->json格式需要
+     *
      * @param tbSpecParam
      * @return
      */

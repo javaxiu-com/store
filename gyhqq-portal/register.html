@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
-    <title>乐优商城--注册页面</title>
+    <title>GYHQQ商城--注册页面</title>
 
 
     <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
@@ -90,7 +90,7 @@
                 <div class="control-group">
                     <label class="control-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <div class="controls">
-                        <input name="m1" type="checkbox" value="2" checked=""><span>同意协议并注册《乐优用户协议》</span>
+                        <input name="m1" type="checkbox" value="2" checked=""><span>同意协议并注册《GYHQQ用户协议》</span>
                     </div>
                 </div>
                 <div class="control-group">
@@ -163,7 +163,7 @@
                 },
                 validate(value, args) {
                     return new Promise(resolve => {
-                        leyou.http.get("/user/check/" + value + "/" + args[0])
+                        store.http.get("/user/check/" + value + "/" + args[0])
                             .then(resp => {
                                 resolve({
                                     valid: resp.data,
@@ -186,7 +186,7 @@
             createVerifyCode() {// 生成短信验证码
                 this.$validator.validate("phone").then(r => {
                     if (r) {
-                        leyou.http.post("/user/code", "phone=" + this.user.phone);
+                        store.http.post("/user/code", "phone=" + this.user.phone);
                     }
                 });
 
@@ -195,7 +195,7 @@
                 this.$validator.validateAll().then(d => {
                     if (d) {
                         // 校验通过，提交表单
-                        leyou.http.post("/user/register", leyou.stringify(this.user))
+                        store.http.post("/user/register", store.stringify(this.user))
                             .then(resp => {
                                 if (resp.status === 201) {
                                     // 注册成功

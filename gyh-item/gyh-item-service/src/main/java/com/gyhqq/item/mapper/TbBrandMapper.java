@@ -2,6 +2,10 @@ package com.gyhqq.item.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gyhqq.item.entity.TbBrand;
+import com.gyhqq.item.pojo.BrandDTO;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,6 @@ import com.gyhqq.item.entity.TbBrand;
  */
 public interface TbBrandMapper extends BaseMapper<TbBrand> {
 
+    @Select("SELECT a.id, a.name, a.letter FROM tb_brand a, tb_category_brand b WHERE a.id= b.brand_id AND b.category_id = #{cid}")
+    List<TbBrand> selectBrandListJoinCategoryId(Long cid);
 }

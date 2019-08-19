@@ -102,16 +102,16 @@ public class TbBrandServiceImpl extends ServiceImpl<TbBrandMapper, TbBrand> impl
     @Transactional(rollbackFor = Exception.class) //保存了两张表,需要事务
     public void updateBrandAndCategory(TbBrand tbBrand, List<Long> cids) {
         boolean brandB = this.updateById(tbBrand);
-        if(!brandB){
-            throw  new GyhException(ExceptionEnum.UPDATE_OPERATION_FAIL);
+        if (!brandB) {
+            throw new GyhException(ExceptionEnum.UPDATE_OPERATION_FAIL);
         }
         Long brandId = tbBrand.getId();
-        if(!CollectionUtils.isEmpty(cids)){
+        if (!CollectionUtils.isEmpty(cids)) {
             //先删除
             QueryWrapper<TbCategoryBrand> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(TbCategoryBrand::getBrandId,brandId);
+            queryWrapper.lambda().eq(TbCategoryBrand::getBrandId, brandId);
             boolean removeB = tbCategoryBrandService.remove(queryWrapper);
-            if(!removeB){
+            if (!removeB) {
                 throw new GyhException(ExceptionEnum.DELETE_OPERATION_FAIL);
             }
             //新增
@@ -124,5 +124,21 @@ public class TbBrandServiceImpl extends ServiceImpl<TbBrandMapper, TbBrand> impl
             }
             tbCategoryBrandService.saveBatch(list);
         }
+    }
+
+    /**
+     * 根据cid查询品牌信息
+     * 有中间表,两个表联查,需要自己创建方法写sql
+     *
+     * @param cid
+     * @return
+     */
+    @Override
+    public List<BrandDTO> findBrandByCid(Long cid) {
+        List<TbBrand> brandDTOList = this.getBaseMapper().selectBrandListJoinCategoryId(cid);
+        if (CollectionUtils.isEmpty(brandDTOList)) {
+            throw new GyhException(ExceptionEnum.BRAND_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(brandDTOList, BrandDTO.class);
     }
 }

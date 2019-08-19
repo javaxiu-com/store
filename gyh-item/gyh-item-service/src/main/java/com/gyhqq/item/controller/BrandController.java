@@ -60,4 +60,15 @@ public class BrandController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 根据分类id查询品牌信息
+     *  新增商品回显数据!
+     * @param cid
+     * @return
+     */
+    @GetMapping("/of/category")
+    public ResponseEntity<List<BrandDTO>> findBrandByCid(@RequestParam(name = "id") Long cid) {
+        return ResponseEntity.ok(tbBrandService.findBrandByCid(cid));
+    }
+
 }

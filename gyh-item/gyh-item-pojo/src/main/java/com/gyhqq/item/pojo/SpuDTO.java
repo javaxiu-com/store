@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * <p>
  * spu表，该表描述的是一个抽象性的商品，比如 iphone8
@@ -56,4 +58,13 @@ public class SpuDTO {
      */
     private Boolean saleable;
 
+    /**
+     * 在新增商品信息的业务中:
+     *   SpuDTO的json格式的对象,
+     *   但是要包含spuDetail和Sku集合。
+     *   我们需要拓展SpuDTO，来接收其中的数据
+     */
+    private List<SkuDTO> skus;
+
+    private SpuDetailDTO spuDetail;
 }
