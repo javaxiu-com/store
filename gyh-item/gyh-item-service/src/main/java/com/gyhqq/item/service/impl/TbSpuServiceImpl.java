@@ -1,9 +1,9 @@
 package com.gyhqq.item.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.gyhqq.item.entity.TbSpu;
 import com.gyhqq.item.mapper.TbSpuMapper;
 import com.gyhqq.item.service.TbSpuService;
+import com.gyhqq.item.entity.TbSpu;
 import org.springframework.stereotype.Service;
 
 /**

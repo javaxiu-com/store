@@ -1,9 +1,9 @@
 package com.gyhqq.item.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gyhqq.item.service.TbApplicationPrivilegeService;
 import com.gyhqq.item.entity.TbApplicationPrivilege;
 import com.gyhqq.item.mapper.TbApplicationPrivilegeMapper;
-import com.gyhqq.item.service.TbApplicationPrivilegeService;
 import org.springframework.stereotype.Service;
 
 /**

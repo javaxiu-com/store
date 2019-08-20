@@ -16,6 +16,7 @@
     <modules>
         <module>gyh-item-service</module>
         <module>gyh-item-pojo</module>
+        <module>gyh-item-interface</module>
     </modules>
 
 </project>

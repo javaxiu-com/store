@@ -1,9 +1,9 @@
 package com.gyhqq.item.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gyhqq.item.service.TbUserService;
 import com.gyhqq.item.entity.TbUser;
 import com.gyhqq.item.mapper.TbUserMapper;
-import com.gyhqq.item.service.TbUserService;
 import org.springframework.stereotype.Service;
 
 /**

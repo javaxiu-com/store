@@ -40,13 +40,16 @@ public class SpecService {
         }
     }
 
-    public List<SpecParamDTO> findParamList(Long gid, Long cid) {
+    public List<SpecParamDTO> findParamList(Long gid, Long cid,Boolean searching) {
         QueryWrapper<TbSpecParam> queryWrapper = new QueryWrapper<>();
         if (gid != null && gid != 0) {
             queryWrapper.lambda().eq(TbSpecParam::getGroupId, gid);
         }
         if (cid != null && cid != 0) {
             queryWrapper.lambda().eq(TbSpecParam::getCid, cid);
+        }
+        if (searching != null) {
+            queryWrapper.lambda().eq(TbSpecParam::getSearching, searching);
         }
         List<TbSpecParam> specParamList = tbSpecParamService.list(queryWrapper);
         if (CollectionUtils.isEmpty(specParamList)) {

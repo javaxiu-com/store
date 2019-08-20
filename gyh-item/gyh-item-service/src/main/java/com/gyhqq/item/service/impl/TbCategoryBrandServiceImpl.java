@@ -1,9 +1,9 @@
 package com.gyhqq.item.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gyhqq.item.service.TbCategoryBrandService;
 import com.gyhqq.item.entity.TbCategoryBrand;
 import com.gyhqq.item.mapper.TbCategoryBrandMapper;
-import com.gyhqq.item.service.TbCategoryBrandService;
 import org.springframework.stereotype.Service;
 
 /**

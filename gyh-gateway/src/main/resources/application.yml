@@ -26,6 +26,7 @@ zuul:
   routes:
     item-service: /item/**        #将商品微服务映射到/item/**
     upload-service: /upload/**    #将上传微服务映射到/upload/**
+    search-service: /search/**    #将搜索微服务映射到/search/**
 gyh:                              #CORS的跨域方案优化配置
   cors:
     allowedOrigins:

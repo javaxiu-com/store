@@ -76,8 +76,9 @@ public class SpecController {
      */
     @GetMapping("/params")
     public ResponseEntity<List<SpecParamDTO>> findParamList(@RequestParam(name = "gid", required = false) Long gid,
-                                                            @RequestParam(name = "cid", required = false) Long cid) {
-        return ResponseEntity.ok(specService.findParamList(gid, cid));
+                                                            @RequestParam(name = "cid", required = false) Long cid,
+                                                            @RequestParam(name = "searching", required = false) Boolean searching) {
+        return ResponseEntity.ok(specService.findParamList(gid, cid,searching));
     }
 
     /**

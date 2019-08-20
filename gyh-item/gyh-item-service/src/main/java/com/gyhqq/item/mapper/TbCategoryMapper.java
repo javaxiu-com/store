@@ -1,7 +1,6 @@
 package com.gyhqq.item.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.gyhqq.item.entity.TbBrand;
 import com.gyhqq.item.entity.TbCategory;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

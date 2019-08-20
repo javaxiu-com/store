@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,6 +62,11 @@ public class SpuDTO {
     private Boolean saleable;
 
     /**
+     * 添加时间
+     */
+    private Date createTime;
+
+    /**
      * 在新增商品信息的业务中:
      *   SpuDTO的json格式的对象,
      *   但是要包含spuDetail和Sku集合。
@@ -83,4 +89,5 @@ public class SpuDTO {
         List<Long> cids = Arrays.asList(cid1, cid2, cid3);
         return cids;
     }
+
 }

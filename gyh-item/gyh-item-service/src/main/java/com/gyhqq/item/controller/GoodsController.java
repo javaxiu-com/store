@@ -1,7 +1,6 @@
 package com.gyhqq.item.controller;
 
 import com.gyhqq.common.vo.PageResult;
-import com.gyhqq.item.entity.TbSpu;
 import com.gyhqq.item.pojo.SkuDTO;
 import com.gyhqq.item.pojo.SpuDTO;
 import com.gyhqq.item.pojo.SpuDetailDTO;

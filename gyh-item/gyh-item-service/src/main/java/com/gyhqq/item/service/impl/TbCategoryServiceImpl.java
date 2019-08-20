@@ -5,15 +5,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gyhqq.common.Exception.GyhException;
 import com.gyhqq.common.enums.ExceptionEnum;
 import com.gyhqq.common.utils.BeanHelper;
-import com.gyhqq.item.entity.TbBrand;
+import com.gyhqq.item.service.TbCategoryService;
 import com.gyhqq.item.entity.TbCategory;
 import com.gyhqq.item.mapper.TbCategoryMapper;
 import com.gyhqq.item.pojo.CategoryDTO;
-import com.gyhqq.item.service.TbCategoryService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -49,5 +50,12 @@ public class TbCategoryServiceImpl extends ServiceImpl<TbCategoryMapper, TbCateg
             throw new GyhException(ExceptionEnum.CATEGORY_NOT_FOUND);
         }
         return BeanHelper.copyWithCollection(tbCategories, CategoryDTO.class);
+    }
+
+    @Override
+    public String findCategoryListByCids(List<Long> cids) {
+        Collection<TbCategory> listByIds = this.listByIds(cids);
+        String categoryNames = listByIds.stream().map(TbCategory::getName).collect(Collectors.joining(","));
+        return categoryNames;
     }
 }
