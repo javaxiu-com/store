@@ -176,16 +176,16 @@ public class SearchService {
      * @param page
      */
     public PageResult<GoodsDTO> search(String key, int page){
-        //springDataES不够用,所以这里用es原生的方法: NativeSearchQueryBuilder
+        //SpringDataES不够用,所以这里用es原生的方法: NativeSearchQueryBuilder
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        //过滤返回的列
+        //1.过滤返回的列
         queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id","subTitle","skus"},null));
-        //构造查询的条件
+        //2.构造查询的条件
         queryBuilder.withQuery(QueryBuilders.matchQuery("all",key));
-        //构造翻页的信息: 因为PageRequest默认page=0,所以要减1
+        //3.构造翻页的信息: 因为索引库默认page=0,而我们api中page默认值是1,所以要减1
         page  = page -1;
         queryBuilder.withPageable(PageRequest.of(page,10));
-        //进行查询
+        //4.进行查询
         AggregatedPage<Goods> aggregatedPage = esTemplate.queryForPage(queryBuilder.build(), Goods.class);
         //总条数
         long total = aggregatedPage.getTotalElements();
