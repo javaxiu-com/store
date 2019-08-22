@@ -83,4 +83,20 @@ public interface ItemClient {
      */
     @GetMapping("/brand/list")
     List<BrandDTO> findBrandListByIds(@RequestParam(name = "ids") List<Long> brandIds);
+
+    /**
+     * 根据id 查询spu
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/spu/{id}")
+    SpuDTO findSpuById(@PathVariable(name = "id") Long spuId);
+
+    /**
+     * 根据cid 查询 规格分组信息
+     * @param cid
+     * @return
+     */
+    @GetMapping("/spec/of/category")
+    List<SpecGroupDTO> findGroupByCid(@RequestParam(name = "id")Long cid);
 }

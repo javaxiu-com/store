@@ -94,5 +94,14 @@ public class GoodsController {
         return ResponseEntity.ok(goodsService.findSkuBySpuId(spuId));
     }
 
+    /**
+     * 根据id 查询spu
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/spu/{id}")
+    public ResponseEntity<SpuDTO> findSpuById(@PathVariable(name = "id") Long spuId){
+        return ResponseEntity.ok(goodsService.findSpuById(spuId));
+    }
 
 }

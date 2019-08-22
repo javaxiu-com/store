@@ -15,6 +15,7 @@
         <module>gyh-common</module>
         <module>gyh-upload</module>
         <module>gyh-search</module>
+        <module>gyh-page</module>
     </modules>
 
     <parent>

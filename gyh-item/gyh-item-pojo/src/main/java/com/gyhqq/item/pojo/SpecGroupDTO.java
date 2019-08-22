@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * <p>
  * 规格参数的分组表，每个商品分类下有多个规格参数组
@@ -31,5 +33,10 @@ public class SpecGroupDTO {
      * 规格组的名称
      */
     private String name;
+
+    /**
+     * 分组下的 规格参数的名字
+     */
+    private List<SpecParamDTO> params;
 
 }

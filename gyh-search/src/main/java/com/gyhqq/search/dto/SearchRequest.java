@@ -2,8 +2,47 @@ package com.gyhqq.search.dto;
 
 import lombok.Data;
 
-@Data
+import java.util.Map;
+
 public class SearchRequest {
-    private String key;
-    private Integer page;
+    private String key;// 搜索条件
+
+    private Integer page;// 当前页
+
+    private Map<String,String> filterMap;//用户选择的过滤条件
+
+    private static final Integer DEFAULT_SIZE = 20;// 每页大小，不从页面接收，而是固定大小
+    private static final Integer DEFAULT_PAGE = 1;// 默认页
+
+    public String getKey() {
+        return key;
+    }
+
+    public Map<String, String> getFilterMap() {
+        return filterMap;
+    }
+
+    public void setFilterMap(Map<String, String> filterMap) {
+        this.filterMap = filterMap;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Integer getPage() {
+        if(page == null){
+            return DEFAULT_PAGE;
+        }
+        // 获取页码时做一些校验，不能小于1
+        return Math.max(DEFAULT_PAGE, page);
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getSize() {
+        return DEFAULT_SIZE;
+    }
 }

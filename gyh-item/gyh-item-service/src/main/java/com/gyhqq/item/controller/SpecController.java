@@ -117,4 +117,14 @@ public class SpecController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 根据cid 查询 规格分组信息
+     * @param cid
+     * @return
+     */
+    @GetMapping("/of/category")
+    public ResponseEntity<List<SpecGroupDTO>> findGroupByCid(@RequestParam(name = "id")Long cid){
+        return ResponseEntity.ok(specService.findGroupByCategoryId(cid));
+    }
+
 }

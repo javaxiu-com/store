@@ -123,7 +123,7 @@
                 <div class="fl value">
                     <ul class="type-list">
                         <li v-for="filter in v">
-                            <a>{{filter.name || filter }} </a>
+                            <a @click="selectFilter(k,filter.id || filter)">{{filter.name || filter }} </a>
                         </li>
                     </ul>
                 </div>
@@ -133,7 +133,7 @@
                 <div class="fl key brand">{{k}}</div>
                 <div class="value logos">
                     <ul class="logo-list">
-                        <li v-for="brand in v"><img :src="brand.image" /></li>
+                        <li v-for="brand in v" @click="selectFilter(k,brand.id)"><img :src="brand.image" /></li>
 
                     </ul>
                 </div>
@@ -184,7 +184,7 @@
                     <li class="yui3-u-1-5" v-for="goods in goodsList">
                         <div class="list-wrap">
                             <div class="p-img">
-                                <a href="item.html" target="_blank"><img :src="goods.selectedSku.image" height="200"/></a>
+                                <a :href="'/item/'+goods.id+'.html'" target="_blank"><img :src="goods.selectedSku.image" height="200"/></a>
                                 <ul class="skus">
                                     <li :class="{selected:sku.id == goods.selectedSku.id}"
                                         v-for="sku in goods.skus"
@@ -341,6 +341,7 @@
 			search:{
                 key:'',
                 page:1,
+                filterMap:{},
             },
             total:0,
             totalPage:0,
@@ -353,7 +354,7 @@
 
             hash.key = key;
             hash.page = hash.page?parseInt(hash.page):1;
-
+            hash.filterMap = hash.filterMap || {};
             this.search = hash;
 
             this.loadData();
@@ -367,6 +368,14 @@
                    window.location.hash = '#'+ly.stringify(obj);
                    this.loadData();
                }
+            },
+            "search.filterMap": {
+                handler(val) {
+                    const {key, ...obj} = this.search;
+                    window.location.hash = '#' + ly.stringify(obj);
+                    this.loadData();
+                    this.loadFilter();
+                }
             }
         },
 		methods:{
@@ -390,6 +399,12 @@
                     .then(resp => {
                         this.filterList = resp.data;
                     });
+            },
+            selectFilter(key, val) {
+                //选择过滤条件的时候, 触发!
+                const {...obj} = this.search.filterMap;
+                obj[key] = val;
+                this.search.filterMap = obj;
             },
             prevPage(){
                 if(this.search.page > 1){

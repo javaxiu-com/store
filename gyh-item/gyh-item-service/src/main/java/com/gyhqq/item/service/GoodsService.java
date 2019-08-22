@@ -206,4 +206,13 @@ public class GoodsService {
             throw new GyhException(ExceptionEnum.INSERT_OPERATION_FAIL);
         }
     }
+
+    public SpuDTO findSpuById(Long spuId) {
+        TbSpu tbSpu = spuService.getById(spuId);
+        if (tbSpu == null) {
+            throw new GyhException(ExceptionEnum.GOODS_NOT_FOUND);
+        }
+        SpuDTO spuDTO = BeanHelper.copyProperties(tbSpu, SpuDTO.class);
+        return spuDTO;
+    }
 }

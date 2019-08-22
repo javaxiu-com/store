@@ -12,6 +12,7 @@ import com.gyhqq.search.dto.GoodsDTO;
 import com.gyhqq.search.dto.SearchRequest;
 import com.gyhqq.search.pojo.Goods;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -286,13 +287,63 @@ public class SearchService {
 
     /**
      * 优化提取出来的代码: 构造查询的条件
+     * 基本查询
+     * 包含关键词 match查询
+     * 和过滤条件
      * @param request
      * @return
      */
     public QueryBuilder basicQuery(SearchRequest request){
-        //构造查询的条件
-        return QueryBuilders.matchQuery("all",request.getKey()).operator(Operator.AND);
+        //构造bool查询 must  filter
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        //构造bool查询的must条件
+        boolQueryBuilder.must(QueryBuilders.matchQuery("all",request.getKey()).operator(Operator.AND));
+        //key - 分类、品牌、规格参数的名字  value - 用户选择过滤条件
+        Map<String, String> filterMap = request.getFilterMap();
+
+        for (String key : filterMap.keySet()) {
+            String value = filterMap.get(key);
+            //es中的 列名字
+            String filterName = "specs."+key;
+            if(key.equals("分类")){
+                filterName = "categoryId";
+            }else if(key.equals("品牌")){
+                filterName = "brandId";
+            }
+            boolQueryBuilder.filter(QueryBuilders.termQuery(filterName,value));
+        }
+        return boolQueryBuilder;
     }
+    /**
+     * 上面代码也可以用下面Map.Entry<String, String>方法来循环!
+     * private QueryBuilder buildBasicQuery(SearchRequest request) {
+     *     // 构建布尔查询
+     *     BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+     *     // 构建基本的match查询
+     *     queryBuilder.must(QueryBuilders.matchQuery("all", request.getKey()).operator(Operator.AND));
+     *     // 构建过滤条件
+     *     Map<String, String> filters = request.getFilters();
+     *     if(!CollectionUtils.isEmpty(filters)) {
+     *         for (Map.Entry<String, String> entry : filters.entrySet()) {
+     *             // 获取过滤条件的key
+     *             String key = entry.getKey();
+     *             // 规格参数的key要做前缀specs.
+     *             if ("分类".equals(key)) {
+     *                 key = "categoryId";
+     *             } else if ("品牌".equals(key)) {
+     *                 key = "brandId";
+     *             } else {
+     *                 key = "specs." + key;
+     *             }
+     *             // value
+     *             String value = entry.getValue();
+     *             // 添加过滤条件
+     *             queryBuilder.filter(QueryBuilders.termQuery(key, value));
+     *         }
+     *     }
+     *     return queryBuilder;
+     * }
+     */
 
     /**
      * (调下面方法)拿聚合得到的id去查值,转成包含图片和名字的对象:brandTerms,返回filterMap
