@@ -1,5 +1,8 @@
 package com.gyhqq.item.controller;
 
+import com.gyhqq.common.Exception.GyhException;
+import com.gyhqq.common.enums.ExceptionEnum;
+import com.gyhqq.common.utils.BeanHelper;
 import com.gyhqq.common.vo.PageResult;
 import com.gyhqq.item.entity.TbBrand;
 import com.gyhqq.item.pojo.BrandDTO;
@@ -7,9 +10,12 @@ import com.gyhqq.item.service.TbBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/brand")
@@ -71,4 +77,20 @@ public class BrandController {
         return ResponseEntity.ok(tbBrandService.findBrandByCid(cid));
     }
 
+    /**
+     * 根据id集合，查询品牌集合
+     * @param brandIds
+     * @return
+     */
+    @GetMapping("/list")
+    public ResponseEntity<List<BrandDTO>> findBrandListByIds(@RequestParam(name = "ids") List<Long> brandIds){
+        Collection<TbBrand> tbBrands = tbBrandService.listByIds(brandIds);
+        if(CollectionUtils.isEmpty(tbBrands)){
+            throw new GyhException(ExceptionEnum.BRAND_NOT_FOUND);
+        }
+        List<BrandDTO> brandDTOList = tbBrands.stream().map(tbBrand -> {
+            return BeanHelper.copyProperties(tbBrand, BrandDTO.class);
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(brandDTOList);
+    }
 }

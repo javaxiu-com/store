@@ -6,20 +6,25 @@ import com.gyhqq.common.enums.ExceptionEnum;
 import com.gyhqq.common.utils.BeanHelper;
 import com.gyhqq.common.utils.JsonUtils;
 import com.gyhqq.common.vo.PageResult;
-import com.gyhqq.search.pojo.Goods;
-import com.gyhqq.search.dto.GoodsDTO;
 import com.gyhqq.item.client.ItemClient;
-import com.gyhqq.item.pojo.SkuDTO;
-import com.gyhqq.item.pojo.SpecParamDTO;
-import com.gyhqq.item.pojo.SpuDTO;
-import com.gyhqq.item.pojo.SpuDetailDTO;
-import org.apache.commons.lang.StringUtils;
+import com.gyhqq.item.pojo.*;
+import com.gyhqq.search.dto.GoodsDTO;
+import com.gyhqq.search.dto.SearchRequest;
+import com.gyhqq.search.pojo.Goods;
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
+import org.springframework.data.elasticsearch.core.query.FetchSourceFilterBuilder;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -71,7 +76,6 @@ public class SearchService {
 
         //4.构造price 的集合
         Set<Long> price = skuDTOList.stream().map(SkuDTO::getPrice).collect(Collectors.toSet());
-
         //5.获取规格参数的名字的集合: 获取规格参数key，来自于SpecParam中当前分类下的需要搜索的规格
         List<SpecParamDTO> specParamList = itemClient.findParamList(null, spuDTO.getCid3(), true);
         //6.获取spudetal的值: 获取规格参数的值，来自于spuDetail
@@ -172,18 +176,18 @@ public class SearchService {
 
     /**
      * 用户输入 关键字，进行搜索
-     * @param key
-     * @param page
+     * @param request
      */
-    public PageResult<GoodsDTO> search(String key, int page){
+    public PageResult<GoodsDTO> search(SearchRequest request){
         //SpringDataES不够用,所以这里用es原生的方法: NativeSearchQueryBuilder
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         //1.过滤返回的列
         queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id","subTitle","skus"},null));
         //2.构造查询的条件
-        queryBuilder.withQuery(QueryBuilders.matchQuery("all",key));
+        //queryBuilder.withQuery(QueryBuilders.matchQuery("all",request.getKey()).operator(Operator.AND)); //设定只能搜索某种!
+        queryBuilder.withQuery(basicQuery(request));
         //3.构造翻页的信息: 因为索引库默认page=0,而我们api中page默认值是1,所以要减1
-        page  = page -1;
+        int page  = request.getPage() -1;
         queryBuilder.withPageable(PageRequest.of(page,10));
         //4.进行查询
         AggregatedPage<Goods> aggregatedPage = esTemplate.queryForPage(queryBuilder.build(), Goods.class);
@@ -198,4 +202,128 @@ public class SearchService {
         List<GoodsDTO> goodsDTOS = BeanHelper.copyWithCollection(goodsList, GoodsDTO.class);
         return  new PageResult<GoodsDTO>(total,Long.valueOf(String.valueOf(totalPages)),goodsDTOS);
     }
+
+    /**
+     * 查询过滤的项
+     * @param request
+     * @return
+     */
+    public Map<String,List<?>> getFilter(SearchRequest request){
+        Map<String,List<?>> filterMap = new LinkedHashMap<>();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        //过滤返回的列
+        queryBuilder.withSourceFilter(new FetchSourceFilterBuilder().build());
+        //构造查询的条件
+        //queryBuilder.withQuery(QueryBuilders.matchQuery("all",request.getKey()).operator(Operator.AND));
+        queryBuilder.withQuery(basicQuery(request));
+        queryBuilder.withPageable(PageRequest.of(0,1));
+        //处理聚合操作
+        String categoryAgg = "categoryAgg";
+        queryBuilder.addAggregation(AggregationBuilders.terms(categoryAgg).field("categoryId"));
+        String  brandAgg = "brandAgg";
+        queryBuilder.addAggregation(AggregationBuilders.terms(brandAgg).field("brandId"));
+        //进行查询
+        AggregatedPage<Goods> result = esTemplate.queryForPage(queryBuilder.build(), Goods.class);
+        Aggregations aggregations = result.getAggregations();
+        LongTerms categoryTerms = aggregations.get(categoryAgg);
+        List<CategoryDTO> categoryDTOList = handlerCategory(categoryTerms,filterMap); //(调下面方法)拿聚合得到的id去查值,转成name:传入categoryTerms,返回filterMap
+        LongTerms brandTerms = aggregations.get(brandAgg);
+        handlerBrand(brandTerms,filterMap); //(调下面方法)拿聚合得到的id去查值,转成包含图片和名字的对象:brandTerms,返回filterMap
+        //只有当分类的返回值是一个的时候，才去聚合规格参数
+        if(!CollectionUtils.isEmpty(categoryDTOList) && categoryDTOList.size()==1){
+            //规格参数的过滤条件获取
+            handlerSpec(request,filterMap,categoryDTOList.get(0).getId()); //(调下面方法)操作规格参数的过滤条件
+        }
+        return filterMap;
+    }
+
+    /**
+     * 操作规格参数的 过滤条件
+     * @param request
+     * @param filterMap
+     */
+    private void handlerSpec(SearchRequest request, Map<String, List<?>> filterMap,Long cid) {
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        //过滤返回的列
+        queryBuilder.withSourceFilter(new FetchSourceFilterBuilder().build());
+        //构造查询的条件
+        //queryBuilder.withQuery(QueryBuilders.matchQuery("all",request.getKey()).operator(Operator.AND));
+        queryBuilder.withQuery(basicQuery(request));
+
+        queryBuilder.withPageable(PageRequest.of(0,1));
+        //获取规格参数的名字
+        List<SpecParamDTO> paramList = itemClient.findParamList(null, cid, true);
+        for (SpecParamDTO paramDTO : paramList) {
+            //规格参数的名字
+            String specName = paramDTO.getName();
+            //ES中要进行聚合的列的名字
+            String fieldName = "specs."+specName;
+            queryBuilder.addAggregation(AggregationBuilders.terms(specName).field(fieldName));
+        }
+        AggregatedPage<Goods> result = esTemplate.queryForPage(queryBuilder.build(), Goods.class);
+        Aggregations aggregations = result.getAggregations();
+        for (SpecParamDTO paramDTO : paramList) {
+            String name = paramDTO.getName();  //有BUG,下面try{}
+            try {
+                //规格参数的名字
+                String specName = paramDTO.getName();
+                StringTerms stringTerms = aggregations.get(specName);
+                //获取聚合的桶
+                List<StringTerms.Bucket> buckets = stringTerms.getBuckets();
+//                List<String> aggList = new ArrayList<>();
+//                for (StringTerms.Bucket bucket : buckets) {
+//                    String aggValue = bucket.getKeyAsString();
+//                    aggList.add(aggValue);
+//                }
+                List<String> aggList = buckets.stream().map(StringTerms.Bucket::getKeyAsString).collect(Collectors.toList());
+                filterMap.put(specName, aggList);
+            } catch (Exception e) {
+               System.out.println(name);
+               e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 优化提取出来的代码: 构造查询的条件
+     * @param request
+     * @return
+     */
+    public QueryBuilder basicQuery(SearchRequest request){
+        //构造查询的条件
+        return QueryBuilders.matchQuery("all",request.getKey()).operator(Operator.AND);
+    }
+
+    /**
+     * (调下面方法)拿聚合得到的id去查值,转成包含图片和名字的对象:brandTerms,返回filterMap
+     * @param brandTerms
+     * @param filterMap
+     */
+    private void handlerBrand(LongTerms brandTerms, Map<String, List<?>> filterMap) {
+        List<LongTerms.Bucket> buckets = brandTerms.getBuckets();
+        List<Long> brandIds = buckets.stream().map(LongTerms.Bucket::getKeyAsNumber)
+                .map(Number::longValue)
+                .collect(Collectors.toList());
+        List<BrandDTO> brandDTOList = itemClient.findBrandListByIds(brandIds);
+        filterMap.put("品牌",brandDTOList);
+    }
+
+    /**
+     * (调下面方法)拿聚合得到的id去查值,转成name:传入categoryTerms,返回filterMap
+     * @param categoryTerms
+     * @param filterMap
+     * @return
+     */
+    private List<CategoryDTO> handlerCategory(LongTerms categoryTerms, Map<String, List<?>> filterMap) {
+        List<LongTerms.Bucket> buckets = categoryTerms.getBuckets();
+        List<Long> cids = new ArrayList<>();
+        for (LongTerms.Bucket bucket : buckets) {
+            long categoryId = bucket.getKeyAsNumber().longValue();
+            cids.add(categoryId);
+        }
+        List<CategoryDTO> categoryDTOList = itemClient.findCateogrySByCids(cids);
+        filterMap.put("分类",categoryDTOList);
+        return categoryDTOList;
+    }
 }
+

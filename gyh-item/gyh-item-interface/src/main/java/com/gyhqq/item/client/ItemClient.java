@@ -3,6 +3,7 @@ package com.gyhqq.item.client;
 import com.gyhqq.common.vo.PageResult;
 import com.gyhqq.item.pojo.*;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,7 +51,7 @@ public interface ItemClient {
     SpuDetailDTO findSpuDetail(@RequestParam(name = "id") Long spuId);
 
     /**
-     * 根据spuid 查询sku的集合
+     * 根据spuid查询sku的集合
      * @param spuId
      * @return
      */
@@ -66,4 +67,20 @@ public interface ItemClient {
     List<SpecParamDTO> findParamList(@RequestParam(name = "gid", required = false) Long gid,
                                      @RequestParam(name = "cid", required = false) Long cid,
                                      @RequestParam(name = "searching", required = false) Boolean searching);
+
+    /**
+     * 根据分类id集合，查询分类信息集合(这里做handlerCategory方法需要用到)
+     * @param cids
+     * @return
+     */
+    @GetMapping("/category/categoryList")
+    List<CategoryDTO> findCateogrySByCids(@RequestParam(name = "cids") List<Long> cids);
+
+    /**
+     * 查询品牌的集合信息
+     * @param brandIds
+     * @return
+     */
+    @GetMapping("/brand/list")
+    List<BrandDTO> findBrandListByIds(@RequestParam(name = "ids") List<Long> brandIds);
 }

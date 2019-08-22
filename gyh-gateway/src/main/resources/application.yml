@@ -31,6 +31,7 @@ gyh:                              #CORS的跨域方案优化配置
   cors:
     allowedOrigins:
       - http://manage.store.com
+      - http://www.store.com
     allowedCredentials: true
     allowedHeaders:
       - "*"

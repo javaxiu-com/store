@@ -8,13 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 public class SearchController {
 
     @Autowired
     private SearchService searchService;
+
     @PostMapping("/page")
     public ResponseEntity<PageResult<GoodsDTO>> search(@RequestBody SearchRequest request){
-            return ResponseEntity.ok(searchService.search(request.getKey(),request.getPage()));
+            return ResponseEntity.ok(searchService.search(request));
+    }
+
+    @PostMapping("/filter")
+    public ResponseEntity<Map<String, List<?>>> filter(@RequestBody SearchRequest request){
+        return ResponseEntity.ok(searchService.getFilter(request));
     }
 }

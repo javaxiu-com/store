@@ -21,4 +21,6 @@ public interface TbCategoryService extends IService<TbCategory> {
     List<CategoryDTO> findByBrandId(Long brandId);
 
     String findCategoryListByCids(List<Long> cids);
+
+    List<CategoryDTO> findCateogrySByCids(List<Long> cids);
 }

@@ -58,4 +58,16 @@ public class TbCategoryServiceImpl extends ServiceImpl<TbCategoryMapper, TbCateg
         String categoryNames = listByIds.stream().map(TbCategory::getName).collect(Collectors.joining(","));
         return categoryNames;
     }
+
+    @Override
+    public List<CategoryDTO> findCateogrySByCids(List<Long> cids) {
+        Collection<TbCategory> listByIds = this.listByIds(cids);
+        if(CollectionUtils.isEmpty(listByIds)){
+            throw  new GyhException(ExceptionEnum.CATEGORY_NOT_FOUND);
+        }
+        List<CategoryDTO> collect = listByIds.stream().map(tbCategory -> {
+            return BeanHelper.copyProperties(tbCategory, CategoryDTO.class);
+        }).collect(Collectors.toList());
+        return collect;
+    }
 }

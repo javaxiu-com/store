@@ -51,7 +51,7 @@ public class CategoryController {
      * @return 分类集合
      */
     @GetMapping("/list")
-    public ResponseEntity<String> findCategoryListByCids(List<Long> cids) {
+    public ResponseEntity<String> findCategoryListByCids(@RequestParam(name = "cids") List<Long> cids) {
         return ResponseEntity.ok(categoryService.findCategoryListByCids(cids));
     }
 
@@ -66,6 +66,16 @@ public class CategoryController {
         }
         BrandDTO brandDTO = BeanHelper.copyProperties(tbBrand, BrandDTO.class);
         return ResponseEntity.ok(brandDTO);
+    }
+
+    /**
+     * 根据分类id集合，查询分类信息集合(这里做handlerCategory方法需要用到)
+     * @param cids
+     * @return
+     */
+    @GetMapping("/categoryList")
+    public ResponseEntity<List<CategoryDTO>> findCateogrySByCids(@RequestParam(name = "cids") List<Long> cids){
+        return ResponseEntity.ok(categoryService.findCateogrySByCids(cids));
     }
 
 }
