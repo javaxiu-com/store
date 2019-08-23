@@ -20,7 +20,7 @@ ribbon:
   ReadTimeout: 2000               #ribbon读取超时时长
   MaxAutoRetries: 0               #当前服务重试次数
   MaxAutoRetriesNextServer: 1     #切换服务重试次数
-  OkToRetryOnAllOperations: false #是否对所有的请求方式都重试，只对get请求重试
+  OkToRetryOnAllOperations: false #是否对所有的请求方式都重试,只对get请求重试
 zuul:
   prefix: /api
   routes:
