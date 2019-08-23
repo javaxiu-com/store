@@ -264,8 +264,8 @@ public class SearchService {
         AggregatedPage<Goods> result = esTemplate.queryForPage(queryBuilder.build(), Goods.class);
         Aggregations aggregations = result.getAggregations();
         for (SpecParamDTO paramDTO : paramList) {
-            String name = paramDTO.getName();  //有BUG,下面try{}
-            try {
+            //String name = paramDTO.getName();  //有BUG,下面try{}(Bug已解决)
+            //try {
                 //规格参数的名字
                 String specName = paramDTO.getName();
                 StringTerms stringTerms = aggregations.get(specName);
@@ -278,10 +278,10 @@ public class SearchService {
 //                }
                 List<String> aggList = buckets.stream().map(StringTerms.Bucket::getKeyAsString).collect(Collectors.toList());
                 filterMap.put(specName, aggList);
-            } catch (Exception e) {
-               System.out.println(name);
-               e.printStackTrace();
-            }
+            //} catch (Exception e) {
+            //   System.out.println(name);
+            //   e.printStackTrace();
+            //}
         }
     }
 
