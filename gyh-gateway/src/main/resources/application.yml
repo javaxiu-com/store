@@ -14,7 +14,7 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 6000   #熔断超时时长：6000ms
+            timeoutInMilliseconds: 6000   #熔断超时时长:6000ms
 ribbon:
   ConnectTimeout: 500             #ribbon链接超时时长
   ReadTimeout: 2000               #ribbon读取超时时长
