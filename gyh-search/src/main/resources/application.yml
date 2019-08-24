@@ -5,7 +5,12 @@ spring:
     name: search-service
   data:
     elasticsearch:
-      cluster-nodes: 127.0.0.1:9300 #springDataES是通过9300与ES交互的
+      cluster-nodes: 192.168.232.131:9300 #springDataES是通过9300与ES交互的
+  rabbitmq:
+    host: 192.168.232.131
+    virtual-host: /store
+    username: store
+    password: store
 eureka:
   client:
     service-url:

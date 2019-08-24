@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gyhqq.common.Exception.GyhException;
+import com.gyhqq.common.constants.MQConstants;
 import com.gyhqq.common.enums.ExceptionEnum;
 import com.gyhqq.common.utils.BeanHelper;
 import com.gyhqq.common.vo.PageResult;
@@ -13,6 +14,7 @@ import com.gyhqq.item.pojo.SkuDTO;
 import com.gyhqq.item.pojo.SpuDTO;
 import com.gyhqq.item.pojo.SpuDetailDTO;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,6 +126,8 @@ public class GoodsService {
         }
     }
 
+    @Autowired
+    private AmqpTemplate amqpTemplate;
     /**
      * 更新上下架,需要事务
      *
@@ -146,6 +150,17 @@ public class GoodsService {
         if (!update) {
             throw new GyhException(ExceptionEnum.UPDATE_OPERATION_FAIL);
         }
+        /**
+         * 发送消息到中间件
+         */
+        //说明交换机
+        String itemSaleable = MQConstants.RoutingKey.ITEM_DOWN_KEY;
+        //判断是否上下架
+        if(saleable){
+            //说明RoutingKey
+            itemSaleable = MQConstants.RoutingKey.ITEM_UP_KEY;
+        }
+        amqpTemplate.convertAndSend(MQConstants.Exchange.ITEM_EXCHANGE_NAME, itemSaleable,spuId);
     }
 
     public SpuDetailDTO findSpuDetail(Long spuId) {

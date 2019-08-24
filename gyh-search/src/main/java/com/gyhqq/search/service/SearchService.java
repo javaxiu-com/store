@@ -38,10 +38,12 @@ public class SearchService {
 
     @Autowired
     private ItemClient itemClient;
+
     @Autowired
     private ElasticsearchTemplate esTemplate;
 
     /**
+     * 方法一:
      * 构造Goods,一个SPU对应一个Goods,一个Goods代表ES中的一条数据! 代表一条@Document(indexName = "goods", type = "docs", shards = 1, replicas = 1)
      * 调用该方法一次,生成一条@Document...
      * 生成Goods需要信息:
@@ -109,7 +111,7 @@ public class SearchService {
                 /**
                  * 是数字类型,分段,见下面chooseSegment方法
                  */
-                chooseSegment(value,paramDTO);
+                value = chooseSegment(value,paramDTO);
             }
             //添加到specs
             specs.put(key,value);
@@ -174,6 +176,127 @@ public class SearchService {
             return 0;
         }
     }
+
+//    /**
+//     * 方法二:
+//     * 把一个Spu转为一个Goods对象
+//     *
+//     * @param spu
+//     * @return
+//     */
+//    public Goods createGoods(SpuDTO spu) {
+//        // 1 商品相关搜索信息的拼接：名称、分类、品牌、规格信息等
+//        // 1.1 分类
+//        String categoryNames = itemClient.findCateogrySByCids(spu.getCategoryIds())
+//                .stream().map(CategoryDTO::getName).collect(Collectors.joining(","));
+//        // 1.2 品牌
+//        BrandDTO brand = itemClient.findById(spu.getBrandId());
+//        // 1.3 名称等，完成拼接
+//        String all = spu.getName() + categoryNames + brand.getName();
+//
+//        // 2 spu下的所有sku的JSON数组
+//        List<SkuDTO> skuList = itemClient.findSkuListBySpuId(spu.getId());
+//        // 准备一个集合，用map来代替sku，只需要sku中的部分数据
+//        List<Map<String, Object>> skuMap = new ArrayList<>();
+//        for (SkuDTO sku : skuList) {
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("id", sku.getId());
+//            map.put("price", sku.getPrice());
+//            map.put("title", sku.getTitle());
+//            map.put("image", StringUtils.substringBefore(sku.getImages(), ","));
+//            skuMap.add(map);
+//        }
+//
+//        // 3 当前spu下所有sku的价格的集合
+//        Set<Long> price = skuList.stream().map(SkuDTO::getPrice).collect(Collectors.toSet());
+//
+//        // 4 当前spu的规格参数
+//        Map<String, Object> specs = new HashMap<>();
+//
+//        // 4.1 获取规格参数key，来自于SpecParam中当前分类下的需要搜索的规格
+//        List<SpecParamDTO> specParams = itemClient.findParamList(null, spu.getCid3(), true);
+//        // 4.2 获取规格参数的值，来自于spuDetail
+//        SpuDetailDTO spuDetail = itemClient.findSpuDetail(spu.getId());
+//        // 4.2.1 通用规格参数值
+//        Map<Long, Object> genericSpec = JsonUtils.toMap(spuDetail.getGenericSpec(), Long.class, Object.class);
+//        // 4.2.2 特有规格参数值
+//        Map<Long, List<String>> specialSpec = JsonUtils.nativeRead(spuDetail.getSpecialSpec(), new TypeReference<Map<Long, List<String>>>() {
+//        });
+//
+//        for (SpecParamDTO specParam : specParams) {
+//            // 获取规格参数的名称
+//            String key = specParam.getName();
+//            // 获取规格参数值
+//            Object value = null;
+//            // 判断是否是通用规格
+//            if (specParam.getGeneric()) {
+//                // 通用规格
+//                value = genericSpec.get(specParam.getId());
+//            } else {
+//                // 特有规格
+//                value = specialSpec.get(specParam.getId());
+//            }
+//            // 判断是否是数字类型
+//            if(specParam.getIsNumeric()){
+//                // 是数字类型，分段
+//                value = chooseSegment(value, specParam);
+//            }
+//            // 添加到specs
+//            specs.put(key, value);
+//        }
+//
+//        Goods goods = new Goods();
+//        // 从spu对象中拷贝与goods对象中属性名一致的属性
+//        goods.setBrandId(spu.getBrandId());
+//        goods.setCategoryId(spu.getCid3());
+//        goods.setId(spu.getId());
+//        goods.setSubTitle(spu.getSubTitle());
+//        goods.setCreateTime(spu.getCreateTime().getTime());
+//        goods.setSkus(JsonUtils.toString(skuMap));// spu下的所有sku的JSON数组
+//        goods.setSpecs(specs); // 当前spu的规格参数
+//        goods.setPrice(price); // 当前spu下所有sku的价格的集合
+//        goods.setAll(all);// 商品相关搜索信息的拼接：标题、分类、品牌、规格信息等
+//        return goods;
+//    }
+//
+//    private String chooseSegment(Object value, SpecParamDTO p) {
+//        if (value == null || StringUtils.isBlank(value.toString())) {
+//            return "其它";
+//        }
+//        double val = parseDouble(value.toString());
+//        String result = "其它";
+//        // 保存数值段
+//        for (String segment : p.getSegments().split(",")) {
+//            String[] segs = segment.split("-");
+//            // 获取数值范围
+//            double begin = parseDouble(segs[0]);
+//            double end = Double.MAX_VALUE;
+//            if (segs.length == 2) {
+//                end = parseDouble(segs[1]);
+//            }
+//            // 判断是否在范围内
+//            if (val >= begin && val < end) {
+//                if (segs.length == 1) {
+//                    result = segs[0] + p.getUnit() + "以上";
+//                } else if (begin == 0) {
+//                    result = segs[1] + p.getUnit() + "以下";
+//                } else {
+//                    result = segment + p.getUnit();
+//                }
+//                break;
+//            }
+//        }
+//        return result;
+//    }
+//
+//    private double parseDouble(String str) {
+//        try {
+//            return Double.parseDouble(str);
+//        } catch (Exception e) {
+//            return 0;
+//        }
+//    }
+
 
     /**
      * 用户输入 关键字，进行搜索

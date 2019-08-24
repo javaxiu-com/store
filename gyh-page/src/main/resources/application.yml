@@ -6,6 +6,11 @@ spring:
     #把thymeleaf 缓存关闭
   thymeleaf:
     cache: false
+  rabbitmq:
+    host: 192.168.232.131
+    virtual-host: /store
+    username: store
+    password: store
 eureka:
   client:
     service-url:

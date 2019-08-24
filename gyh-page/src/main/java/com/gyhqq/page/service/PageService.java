@@ -1,7 +1,10 @@
 package com.gyhqq.page.service;
 
+import com.gyhqq.common.Exception.GyhException;
+import com.gyhqq.common.enums.ExceptionEnum;
 import com.gyhqq.item.client.ItemClient;
 import com.gyhqq.item.pojo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class PageService {
 
@@ -61,9 +65,9 @@ public class PageService {
 
     @Autowired
     private SpringTemplateEngine templateEngine;
-
+    private final String dirPath = "C:\\App\\Nginx\\nginx-1.16.0\\html\\item\\";
     public void createHtml(Long spuId){
-        String dirPath = "C:\\App\\Nginx\\nginx-1.16.0\\html\\item";
+
         Map<String, Object> map = this.loadData(spuId);
         //获取上下文
         Context context = new Context();
@@ -84,5 +88,21 @@ public class PageService {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * 删除文件
+     * @param spuId
+     */
+    public void delHtml(Long spuId) {
+        File file = new File(dirPath, spuId + ".html");
+        boolean delete = file.delete();
+        System.out.println("delere==="+delete);
+        if(file.exists()){
+            if (!file.delete()) {
+                log.error("【静态页服务】静态页删除失败，商品id：{}", spuId);
+                throw new GyhException(ExceptionEnum.FILE_WRITER_ERROR);
+            }
+        }
     }
 }
