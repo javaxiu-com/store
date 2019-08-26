@@ -1,0 +1,20 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: sms-service
+  rabbitmq:
+    host: 192.168.232.131
+    virtual-host: /store
+    username: store
+    password: store
+gyh:
+  sms:
+    accessKeyId: LTAIpAglU0oE3mde #LTAIUVK6tAM6xxYm
+    accessKeySecret: d1v6G73cEXKnlGctNcbRutvsCJRU6P #L5Y0Lg6r2cAHgm6uVAdkLe5RdzWpRn
+    signName: GYHQQ分享社区 # 签名名称
+    verifyCodeTemplate: SMS_167531784 #SMS_169636334 # 模板名称
+    domain: dysmsapi.aliyuncs.com # 域名
+    action: SendSMS # API类型，发送短信
+    version: 2017-05-25 # API版本，固定值
+    regionID: cn-hangzhou # 区域id

@@ -16,6 +16,8 @@
         <module>gyh-upload</module>
         <module>gyh-search</module>
         <module>gyh-page</module>
+        <module>gyh-sms</module>
+        <module>gyh-user</module>
     </modules>
 
     <parent>
