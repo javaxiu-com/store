@@ -1,6 +1,7 @@
 package com.gyhqq.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gyhqq.user.DTO.UserDTO;
 import com.gyhqq.user.entity.TbUser;
 
 /**
@@ -18,4 +19,6 @@ public interface TbUserService extends IService<TbUser> {
     void sendCode(String phone);
 
     void register(TbUser user, String code);
+
+    UserDTO queryUserByPassword(String username, String password);
 }

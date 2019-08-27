@@ -13,8 +13,8 @@ public class GyhException extends RuntimeException {
         this.status = em.getStatus();
     }
 
-    public GyhException(ExceptionEnum em, Throwable cause) {
-        super(em.getMessage(), cause);
-        this.status = em.getStatus();
+    public GyhException(int status, String allErrorMsg) {
+        super(allErrorMsg);
+        this.status = status;
     }
 }

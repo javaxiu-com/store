@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gyhqq.common.Exception.GyhException;
 import com.gyhqq.common.constants.MQConstants;
 import com.gyhqq.common.enums.ExceptionEnum;
+import com.gyhqq.common.utils.BeanHelper;
 import com.gyhqq.common.utils.RegexUtils;
+import com.gyhqq.user.DTO.UserDTO;
 import com.gyhqq.user.entity.TbUser;
 import com.gyhqq.user.mapper.TbUserMapper;
 import com.gyhqq.user.service.TbUserService;
@@ -89,6 +91,10 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
 
     @Override
     public void register(TbUser user, String code) {
+        //检查手机号码是否已经注册
+
+        //检查用户名是否已经存在
+
         //验证code
         String cacheCode = redisTemplate.opsForValue().get(KEY_PREFIX + user.getPhone());
         if (!cacheCode.equals(code)) {
@@ -103,5 +109,21 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
         }
         //删除redis中的code值
         redisTemplate.delete(KEY_PREFIX + user.getPhone());
+    }
+
+    @Override
+    public UserDTO queryUserByPassword(String username, String password) {
+        QueryWrapper<TbUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(TbUser::getUsername, username);
+        TbUser tbUser = this.getOne(queryWrapper);
+        if (tbUser == null) {
+            throw new GyhException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
+        }
+        String dbPwd = tbUser.getPassword();
+        boolean b = passwordEncoder.matches(password, dbPwd);
+        if (!b) {
+            throw new GyhException(ExceptionEnum.INVALID_USERNAME_PASSWORD);
+        }
+        return BeanHelper.copyProperties(tbUser, UserDTO.class);
     }
 }

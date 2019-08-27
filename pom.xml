@@ -18,6 +18,7 @@
         <module>gyh-page</module>
         <module>gyh-sms</module>
         <module>gyh-user</module>
+        <module>gyh-auth</module>
     </modules>
 
     <parent>

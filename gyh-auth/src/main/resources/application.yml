@@ -1,0 +1,16 @@
+server:
+  port: 8087
+spring:
+  application:
+    name: auth-service
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+gyh:
+  jwt:
+    pubKeyPath: C:/App/Nginx/nginx-1.16.0/html/rsa/id_rsa.pub # 公钥地址
+    priKeyPath: C:/App/Nginx/nginx-1.16.0/html/rsa/id_rsa # 私钥地址

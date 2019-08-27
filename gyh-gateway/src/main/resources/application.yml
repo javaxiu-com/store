@@ -28,6 +28,7 @@ zuul:
     upload-service: /upload/**    #将上传微服务映射到/upload/**
     search-service: /search/**    #将搜索微服务映射到/search/**
     user-service: /user/**        #将用户中心微服务映射到/search/**
+    auth-service: /auth/**        #将授权中心微服务映射到/auth/**
 gyh:                              #CORS的跨域方案优化配置
   cors:
     allowedOrigins:
