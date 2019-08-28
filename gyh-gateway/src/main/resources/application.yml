@@ -47,3 +47,15 @@ gyh:                              #CORS的跨域方案优化配置
       - HEAD
     maxAge: 360000
     filterPath: "/**"
+  jwt:
+    pubKeyPath: C:/App/Nginx/nginx-1.16.0/html/rsa/id_rsa.pub # 公钥地址
+    user:
+      cookieName: GYH_TOKEN # cookie名称
+  filter:  # 配置AuthFilter白名单-->鉴权
+    allowPaths:
+      - /api/auth/login
+      - /api/search
+      - /api/user/register
+      - /api/user/check
+      - /api/user/code
+      - /api/item

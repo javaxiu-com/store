@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: auth-service
+  redis:
+    host: 192.168.232.131
 eureka:
   client:
     service-url:
@@ -18,4 +20,4 @@ gyh:
       expire: 30 # 过期时间,单位分钟
       cookieName: GYH_TOKEN # cookie名称
       cookieDomain: store.com # cookie的域
-      minRefreshInterval: 15 #分钟
+      minRefreshInterval: 15 #分钟 最小刷新时间

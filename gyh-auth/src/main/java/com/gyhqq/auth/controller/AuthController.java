@@ -1,13 +1,17 @@
 package com.gyhqq.auth.controller;
 
 import com.gyhqq.auth.service.AuthService;
+import com.gyhqq.common.auth.entity.UserInfo;
+import com.gyhqq.user.DTO.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -30,6 +34,26 @@ public class AuthController {
             HttpServletResponse response) {
         // 登录
         authService.login(username, password, response);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * 验证用户登录状态
+     * @param request
+     * @return
+     */
+    @GetMapping("/verify")
+    public ResponseEntity<UserInfo> userVerify(HttpServletRequest request,HttpServletResponse response) {
+        return ResponseEntity.ok(authService.userVerify(request,response));
+    }
+
+    /**
+     * 用户退出登录
+     * @return
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        authService.logout(request, response);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
