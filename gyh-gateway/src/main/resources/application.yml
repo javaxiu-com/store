@@ -22,13 +22,14 @@ ribbon:
   MaxAutoRetriesNextServer: 1     #切换服务重试次数
   OkToRetryOnAllOperations: false #是否对所有的请求方式都重试,只对get请求重试
 zuul:
-  prefix: /api
+  prefix: /api  #添加路由前缀
   routes:
     item-service: /item/**        #将商品微服务映射到/item/**
     upload-service: /upload/**    #将上传微服务映射到/upload/**
     search-service: /search/**    #将搜索微服务映射到/search/**
     user-service: /user/**        #将用户中心微服务映射到/search/**
     auth-service: /auth/**        #将授权中心微服务映射到/auth/**
+  sensitive-headers:  #覆盖敏感头信息
 gyh:                              #CORS的跨域方案优化配置
   cors:
     allowedOrigins:

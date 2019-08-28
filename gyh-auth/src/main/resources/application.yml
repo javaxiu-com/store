@@ -14,3 +14,8 @@ gyh:
   jwt:
     pubKeyPath: C:/App/Nginx/nginx-1.16.0/html/rsa/id_rsa.pub # 公钥地址
     priKeyPath: C:/App/Nginx/nginx-1.16.0/html/rsa/id_rsa # 私钥地址
+    user:
+      expire: 30 # 过期时间,单位分钟
+      cookieName: GYH_TOKEN # cookie名称
+      cookieDomain: store.com # cookie的域
+      minRefreshInterval: 15 #分钟
