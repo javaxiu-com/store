@@ -41,22 +41,37 @@ public class AuthFilter extends ZuulFilter {
 
     @Override
     public boolean shouldFilter() {
-        //过去当前请求的path
+        //获取当前请求的path
         List<String> allowPaths = filterprop.getAllowPaths();
+        //获取上下文
         RequestContext ctx = RequestContext.getCurrentContext();
+        //获取request
         HttpServletRequest request = ctx.getRequest();
+        //获取路径
         String path = request.getRequestURI();
-        //通过白名单 ，判断当前的path是否需要过滤
+        //通过白名单,判断当前的path是否需要过滤
         return !isAllowPath(path);
     }
 
     private boolean isAllowPath(String requestURI) {
         // 定义一个标记
+//        boolean flag = false;
+//        // 遍历允许访问的路径
+//        List<String> allowPaths = filterprop.getAllowPaths();
+//        for (String allowPath : allowPaths) {
+//            if (allowPath.startsWith(requestURI)) {
+//                flag = true;
+//                break;
+//            }
+//        }
+//        return flag;
+
+        // 定义一个标记
         boolean flag = false;
         // 遍历允许访问的路径
-        List<String> allowPaths = filterprop.getAllowPaths();
-        for (String allowPath : allowPaths) {
-            if (allowPath.startsWith(requestURI)) {
+        for (String path : this.filterprop.getAllowPaths()) {
+            // 然后判断是否是符合
+            if(requestURI.startsWith(path)){
                 flag = true;
                 break;
             }
@@ -67,6 +82,7 @@ public class AuthFilter extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
 //        是否登录：获取token，解密token，如果有异常，直接返回，没有登录
+        //获取上下文
         RequestContext ctx = RequestContext.getCurrentContext();
         try {
 //        获取request
