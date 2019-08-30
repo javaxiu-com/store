@@ -20,6 +20,7 @@
         <module>gyh-user</module>
         <module>gyh-auth</module>
         <module>gyh-config</module>
+        <module>gyh-cart</module>
     </modules>
 
     <parent>

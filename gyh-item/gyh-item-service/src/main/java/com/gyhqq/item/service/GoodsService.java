@@ -230,4 +230,15 @@ public class GoodsService {
         SpuDTO spuDTO = BeanHelper.copyProperties(tbSpu, SpuDTO.class);
         return spuDTO;
     }
+
+    public List<SkuDTO> findSkuListByIds(List<Long> ids) {
+        Collection<TbSku> tbSkuCollection = skuService.listByIds(ids);
+        if(CollectionUtils.isEmpty(tbSkuCollection)){
+            throw new GyhException(ExceptionEnum.GOODS_NOT_FOUND);
+        }
+        List<SkuDTO> skuDTOList = tbSkuCollection.stream().map(tbSku -> {
+            return BeanHelper.copyProperties(tbSku, SkuDTO.class);
+        }).collect(Collectors.toList());
+        return skuDTOList;
+    }
 }

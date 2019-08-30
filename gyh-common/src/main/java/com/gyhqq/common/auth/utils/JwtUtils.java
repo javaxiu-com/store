@@ -6,11 +6,17 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoder;
+import io.jsonwebtoken.io.Decoders;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.sun.xml.internal.ws.util.xml.XMLReaderComposite.State.Payload;
@@ -98,6 +104,26 @@ public class JwtUtils {
         Payload<T> claims = new Payload<>();
         claims.setId(body.getId());
         claims.setExpiration(body.getExpiration());
+        return claims;
+    }
+
+    private static final Decoder<String, byte[]> stringDecoder = Decoders.BASE64URL;
+    /**
+     * 获取token中的载荷信息
+     *
+     * @param token     用户请求中的令牌
+     * @return 用户信息
+     */
+    public static <T> Payload<T> getInfoFromToken(String token, Class<T> userType) throws UnsupportedEncodingException {
+        //获取jwt中的payload信息
+        String payloadStr = StringUtils.substringBetween(token, ".");
+        byte[] bytes = stringDecoder.decode(payloadStr);
+        String json = new String(bytes, "UTF-8");
+        Map<String, String> map = JsonUtils.toMap(json, String.class, String.class);
+        Payload<T> claims = new Payload<>();
+        claims.setId(map.get("jti"));
+        claims.setExpiration(new Date(Long.valueOf(map.get("exp"))));
+        claims.setUserInfo(JsonUtils.toBean(map.get("user"), userType));
         return claims;
     }
 }

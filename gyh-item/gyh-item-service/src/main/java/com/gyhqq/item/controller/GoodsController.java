@@ -104,4 +104,14 @@ public class GoodsController {
         return ResponseEntity.ok(goodsService.findSpuById(spuId));
     }
 
+    /**
+     * 根据ids 查询sku集合
+     * @param ids
+     * @return
+     */
+    @GetMapping("/sku/list")
+    public ResponseEntity<List<SkuDTO>> findSkuListByIds(@RequestParam(name = "ids") List<Long> ids){
+        return ResponseEntity.ok(goodsService.findSkuListByIds(ids));
+    }
+
 }

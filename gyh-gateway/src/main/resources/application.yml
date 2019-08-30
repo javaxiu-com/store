@@ -29,6 +29,7 @@ zuul:
     search-service: /search/**    #将搜索微服务映射到/search/**
     user-service: /user/**        #将用户中心微服务映射到/search/**
     auth-service: /auth/**        #将授权中心微服务映射到/auth/**
+    cart-service: /cart/**        #将购物车微服务映射到/cart/**
   sensitive-headers:  #覆盖敏感头信息
 gyh:                              #CORS的跨域方案优化配置
   cors:
