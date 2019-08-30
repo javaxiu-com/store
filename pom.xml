@@ -19,6 +19,7 @@
         <module>gyh-sms</module>
         <module>gyh-user</module>
         <module>gyh-auth</module>
+        <module>gyh-config</module>
     </modules>
 
     <parent>

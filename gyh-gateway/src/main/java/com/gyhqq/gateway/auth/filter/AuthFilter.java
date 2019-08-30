@@ -59,7 +59,8 @@ public class AuthFilter extends ZuulFilter {
 //        // 遍历允许访问的路径
 //        List<String> allowPaths = filterprop.getAllowPaths();
 //        for (String allowPath : allowPaths) {
-//            if (allowPath.startsWith(requestURI)) {
+          // 然后判断是否是符合
+//            if (requestURI.startsWith(allowPath)) {
 //                flag = true;
 //                break;
 //            }

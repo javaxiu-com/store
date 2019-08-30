@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/gyhqq/store.git/gyhqq-config
+  rabbitmq:
+    host: 192.168.232.131
+    virtual-host: /store
+    username: store
+    password: store
+management: #暴露触发消息总线的地址
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+server:
+  port: 12000
