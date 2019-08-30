@@ -1,0 +1,29 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: item-service
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql:///store?characterEncoding=UTF-8
+    username: root
+    password: root
+    #type: com.alibaba.druid.pool.DruidDataSource   #为什么使用集中配置组件需要注释掉?
+  rabbitmq:
+    host: 192.168.232.131
+    virtual-host: /store
+    username: store
+    password: store
+#myBatis-plus
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #输出sql日志
+  mapper-locations: classpath*:mapper/**Mapper.xml        #.xml目录
+  type-aliases-package: com.gyhqq.item.mapper             #接口包
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
