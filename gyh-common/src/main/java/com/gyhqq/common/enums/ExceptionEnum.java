@@ -34,7 +34,7 @@ public enum ExceptionEnum {
     FILE_WRITER_ERROR(500, "文件写入失败！"),
     SEND_MESSAGE_ERROR(500, "短信发送失败！"),
     INVALID_ORDER_STATUS(500, "订单状态不正确！"),
-
+    STOCK_NOT_ENOUGH_ERROR(500,"库存不足!"),
     UNAUTHORIZED(401, "登录失效或未登录！");
 
     private int status;

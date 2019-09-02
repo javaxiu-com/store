@@ -1,5 +1,6 @@
 package com.gyhqq.user.client;
 
+import com.gyhqq.user.DTO.AddressDTO;
 import com.gyhqq.user.DTO.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,4 +16,15 @@ public interface UserClient {
      */
     @GetMapping("query")
     UserDTO queryUserByUsernameAndPassword(@RequestParam("username") String username, @RequestParam("password") String password);
+
+
+    /**
+     * 获取用户的 地址信息
+     * @param userId
+     * @param id
+     * @return
+     */
+    @GetMapping("/address")
+    AddressDTO findAddressByUserIdAndId(@RequestParam(name = "userId") Long userId,
+                                        @RequestParam(name = "id") Long id);
 }

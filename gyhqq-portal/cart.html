@@ -49,7 +49,7 @@
                 <li class="yui3-u-11-24">
                   <div class="good-item">
                     <div class="item-img"><a :href="'/item/'+c.spuId+'.html'" target="_blank"><img
-                        :src="c.image" width="80px" height="80px"/></a></div>
+                            :src="c.image" width="80px" height="80px"/></a></div>
                     <div class="item-msg">
 												<span>
 													<p v-text="c.title.substring(0, 35) + '...'"></p>
@@ -155,7 +155,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                     <li>
@@ -168,7 +168,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                     <li>
@@ -181,7 +181,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                     <li>
@@ -194,7 +194,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                   </ul>
@@ -211,7 +211,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                     <li>
@@ -224,7 +224,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                     <li>
@@ -237,7 +237,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                     <li>
@@ -250,7 +250,7 @@
                       </div>
                       <div class="incar">
                         <a href="#" class="sui-btn btn-bordered btn-xlarge btn-default"><i
-                            class="car"></i><span class="cartxt">加入购物车</span></a>
+                                class="car"></i><span class="cartxt">加入购物车</span></a>
                       </div>
                     </li>
                   </ul>
@@ -333,8 +333,8 @@
       loadCarts() {
         // 查询购物车
         this.isLogin().then(() => {
-          // 判断本地未登录购物车是否存在，
-          /*const carts = ly.store.get("carts") || [];
+          //判断本地未登录购物车是否存在
+          const carts = ly.store.get("carts") || [];
           if (carts.length > 0) {
             // 如果存在，发到后台，添加到redis，删除本地购物车
             ly.http.post("/cart/list", carts).then(() => {
@@ -348,16 +348,15 @@
           } else {
             // 查询购物车
             this.handleLoginCarts();
-          }*/
-		  // 查询购物车
-		  this.handleLoginCarts();
+          }
         }).catch(() => {
           // 未登录
           console.log("未登录")
           const carts = ly.store.get("carts");
           this.loadSku(carts).then(() => {
             this.carts = carts;
-            this.refreshSelectedCarts();
+            this.selectedCarts = this.carts.filter(c => c.enable && c.num <= c.stock);
+            this.enableCarts = this.selectedCarts;
           });
         })
       },
@@ -366,7 +365,8 @@
         ly.http.get("/cart/list").then(resp => {
           this.loadSku(resp.data).then(() => {
             this.carts = resp.data;
-            this.refreshSelectedCarts();
+            this.selectedCarts = this.carts.filter(c => c.enable);
+            this.enableCarts = this.selectedCarts;
           });
         }).catch(() => {
           // 提示
@@ -384,15 +384,12 @@
           ly.http.put("/cart", ly.stringify({
             id: c.skuId,
             num: c.num
-          })).then(()=>{
-            this.refreshSelectedCarts();
-          }).catch(() => {
+          })).catch(() => {
             alert("服务器忙");
           })
         }).catch(() => {
           // 未登录
           ly.store.set("carts", this.carts);
-          this.refreshSelectedCarts();
         })
       },
       decrement(c) {
@@ -403,8 +400,7 @@
           ly.http.put("/cart", ly.stringify({
             id: c.skuId,
             num: c.num
-          })).then(()=>this.refreshSelectedCarts())
-            .catch(() => {
+          })).catch(() => {
             alert("服务器忙");
           })
         }).catch(() => {
@@ -417,13 +413,12 @@
         this.carts.splice(i, 1);
         this.isLogin().then(() => {
           // 已登录
-          ly.http.delete("/cart/" + id).then(()=>this.refreshSelectedCarts()).catch(() => {
+          ly.http.delete("/cart/" + id).catch(() => {
             alert("服务器忙");
-          });
+          })
         }).catch(() => {
           // 未登录
           ly.store.set("carts", this.carts);
-          this.refreshSelectedCarts();
         })
       },
       toOrderInfo() {
@@ -440,10 +435,6 @@
           c.num = c.stock;
           alert("超出库存上限");
         }
-      },
-      refreshSelectedCarts(){
-        this.selectedCarts = this.carts.filter(c => c.enable);
-        this.enableCarts = this.selectedCarts;
       }
     },
     watch: {

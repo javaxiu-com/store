@@ -6,9 +6,11 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 @FeignClient("item-service")
 public interface ItemClient {
@@ -99,4 +101,19 @@ public interface ItemClient {
      */
     @GetMapping("/spec/of/category")
     List<SpecGroupDTO> findGroupByCid(@RequestParam(name = "id")Long cid);
+
+    /**
+     * 根据skuid的集合 获取sku集合
+     * @param ids
+     * @return
+     */
+    @GetMapping("/sku/list")
+    List<SkuDTO> findSkuListByIds(@RequestParam(name = "ids") List<Long> ids);
+
+    /**
+     * 减库存
+     * @param skuIdNumMap
+     */
+    @PutMapping("/stock/minus")
+    void minusStock(Map<Long, Integer> skuIdNumMap);
 }

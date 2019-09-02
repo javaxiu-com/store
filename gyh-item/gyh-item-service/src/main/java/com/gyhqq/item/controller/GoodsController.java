@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class GoodsController {
@@ -112,6 +113,16 @@ public class GoodsController {
     @GetMapping("/sku/list")
     public ResponseEntity<List<SkuDTO>> findSkuListByIds(@RequestParam(name = "ids") List<Long> ids){
         return ResponseEntity.ok(goodsService.findSkuListByIds(ids));
+    }
+
+    /**
+     * 减库存
+     * @param skuIdNumMap
+     */
+    @PutMapping("/stock/minus")
+    public ResponseEntity<Void> minusStock(Map<Long, Integer> skuIdNumMap){
+        goodsService.minusStock(skuIdNumMap);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

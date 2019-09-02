@@ -21,6 +21,7 @@
         <module>gyh-auth</module>
         <module>gyh-config</module>
         <module>gyh-cart</module>
+        <module>gyh-order</module>
     </modules>
 
     <parent>

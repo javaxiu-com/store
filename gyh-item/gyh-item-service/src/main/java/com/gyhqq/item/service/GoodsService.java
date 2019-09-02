@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -240,5 +241,13 @@ public class GoodsService {
             return BeanHelper.copyProperties(tbSku, SkuDTO.class);
         }).collect(Collectors.toList());
         return skuDTOList;
+    }
+
+    /**
+     * 减库存
+     * @param skuIdNumMap
+     */
+    public void minusStock(Map<Long, Integer> skuIdNumMap) {
+        skuService.minusStock(skuIdNumMap);
     }
 }
