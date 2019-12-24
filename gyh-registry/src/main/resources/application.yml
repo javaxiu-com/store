@@ -4,8 +4,8 @@ spring:
   application:
     name: gyh-registry
 eureka:
-  client:         #目前没做多个server集群,故配置不注册自己,不拉取自己
-    fetch-registry: false
-    register-with-eureka: false
+  client:         #目前没做多个server集群,故配置不注册自己,不拉取自己,eureka默认情况下,把自己当做客户端来注册自己,所以我们要禁用它
+    fetch-registry: false           #表示是否从Eureka Server上获取注册信息，默认为true
+    register-with-eureka: false     #表示是否将自己注册到Eureka Server上，默认为true
     service-url:
       defaultZone: http://127.0.0.1:10086/eureka
