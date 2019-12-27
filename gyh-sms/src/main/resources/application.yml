@@ -5,9 +5,9 @@ spring:
     name: sms-service
   rabbitmq:
     host: 192.168.232.131
-    virtual-host: /store
-    username: store
-    password: store
+    virtual-host: /gyhqq
+    username: gyhqq
+    password: gyhqq
 gyh:
   sms:
     accessKeyId: LTAIpAglU0oE3mde #LTAIUVK6tAM6xxYm

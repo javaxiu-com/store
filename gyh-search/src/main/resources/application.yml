@@ -8,9 +8,9 @@ spring:
       cluster-nodes: 192.168.232.131:9300 #springDataES是通过9300与ES交互的
   rabbitmq:
     host: 192.168.232.131
-    virtual-host: /store
-    username: store
-    password: store
+    virtual-host: /gyhqq
+    username: gyhqq
+    password: gyhqq
 eureka:
   client:
     service-url:
