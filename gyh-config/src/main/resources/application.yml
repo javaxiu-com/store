@@ -6,6 +6,8 @@ spring:
       server:
         git:
           uri: https://github.com/gyhqq/store-config.git
+          username: #Git仓库用户名
+          password: #Git仓库密码
   rabbitmq:
     host: 192.168.232.131
     virtual-host: /gyhqq
