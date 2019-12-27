@@ -19,5 +19,5 @@ gyh:
     user:
       expire: 30 # 过期时间,单位分钟
       cookieName: GYH_TOKEN # cookie名称
-      cookieDomain: store.com # cookie的域
+      cookieDomain: gyhqq.xyz # cookie的域
       minRefreshInterval: 15 #分钟 最小刷新时间
