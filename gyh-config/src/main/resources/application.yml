@@ -8,9 +8,9 @@ spring:
           uri: https://github.com/gyhqq/store-config.git
   rabbitmq:
     host: 192.168.232.131
-    virtual-host: /store
-    username: store
-    password: store
+    virtual-host: /gyhqq
+    username: gyhqq
+    password: gyhqq
 management: #暴露触发消息总线的地址
   endpoints:
     web:
