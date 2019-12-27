@@ -35,8 +35,8 @@ zuul:
 gyh:                              #CORS的跨域方案优化配置
   cors:
     allowedOrigins:
-      - http://manage.store.com
-      - http://www.store.com
+      - http://manage.gyhqq.xyz
+      - http://www.gyhqq.xyz
     allowedCredentials: true
     allowedHeaders:
       - "*"
