@@ -11,9 +11,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   rabbitmq:
     host: 192.168.232.131
-    virtual-host: /store
-    username: store
-    password: store
+    virtual-host: /gyhqq
+    username: gyhqq
+    password: gyhqq
 #myBatis-plus
 mybatis-plus:
   configuration:
