@@ -11,9 +11,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   rabbitmq:
     host: 192.168.232.131
-    virtual-host: /store
-    username: store
-    password: store
+    virtual-host: /gyhqq
+    username: gyhqq
+    password: gyhqq
 eureka:
   client:
     service-url:
@@ -31,7 +31,7 @@ gyh:
   jwt:
     user:
       cookieName: GYH_TOKEN   # cookie名称
-      cookieDomain: store.com # cookie的域
+      cookieDomain: gyhqq.xyz # cookie的域
   worker:
     workerId: 1
     dataCenterId: 1
