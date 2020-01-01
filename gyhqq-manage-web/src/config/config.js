@@ -3,7 +3,7 @@ const config = {
   debug: {
     http: false // http request log
   },
-  api: 'http://api.store.com/api',
+  api: 'http://api.gyhqq.com/api',
   theme:{
     primary: "#2196F3",
     secondary: "#455A64",
